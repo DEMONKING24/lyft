@@ -1,0 +1,77 @@
+import unittest
+from datetime import datetime
+
+from engine.model.calliope import Calliope
+from engine.model.glissade import Glissade
+from engine.model.palindrome import Palindrome
+from engine.model.rorschach import Rorschach
+from engine.model.thovex import Thovex
+
+
+class CarModelTest(unittest.TestCase):
+    def setUp(self):
+        self.today = datetime.today().date()
+
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        raise NotImplementedError("create_car() must be implemented in subclasses.")
+
+    def test_battery_should_be_serviced(self):
+        last_service_date = self.today.replace(year=self.today.year - 3)
+        current_mileage = 0
+        last_service_mileage = 0
+
+        car = self.create_car(last_service_date, current_mileage, last_service_mileage)
+        self.assertTrue(car.needs_service())
+
+    def test_battery_should_not_be_serviced(self):
+        last_service_date = self.today.replace(year=self.today.year - 1)
+        current_mileage = 0
+        last_service_mileage = 0
+
+        car = self.create_car(last_service_date, current_mileage, last_service_mileage)
+        self.assertFalse(car.needs_service())
+
+    def test_engine_should_be_serviced(self):
+        last_service_date = self.today
+        current_mileage = 30001
+        last_service_mileage = 0
+
+        car = self.create_car(last_service_date, current_mileage, last_service_mileage)
+        self.assertTrue(car.needs_service())
+
+    def test_engine_should_not_be_serviced(self):
+        last_service_date = self.today
+        current_mileage = 30000
+        last_service_mileage = 0
+
+        car = self.create_car(last_service_date, current_mileage, last_service_mileage)
+        self.assertFalse(car.needs_service())
+
+
+class TestCalliope(CarModelTest):
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        return Calliope(last_service_date, current_mileage, last_service_mileage)
+
+
+class TestGlissade(CarModelTest):
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        return Glissade(last_service_date, current_mileage, last_service_mileage)
+
+
+class TestPalindrome(CarModelTest):
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        return Palindrome(last_service_date, current_mileage, last_service_mileage)
+
+
+class TestRorschach(CarModelTest):
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        return Rorschach(last_service_date, current_mileage, last_service_mileage)
+
+
+class TestThovex(CarModelTest):
+    def create_car(self, last_service_date, current_mileage, last_service_mileage):
+        return Thovex(last_service_date, current_mileage, last_service_mileage)
+
+
+if __name__ == '__main__':
+    unittest.main()
